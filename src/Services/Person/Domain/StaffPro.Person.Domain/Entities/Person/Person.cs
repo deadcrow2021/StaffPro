@@ -160,12 +160,20 @@ public class Person
     }
 
     /// <summary>
+    /// Получить список опытов работы
+    /// </summary>
+    /// <returns></returns>
+    public WorkExperience[] GetWorkExperiencesList()
+    {
+        return WorkExperiences;
+    }
+
+    /// <summary>
     /// Получить сущность WorkExperience
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    public WorkExperience GetWorkExperienceById(int id)
+    public WorkExperience? GetWorkExperienceById(int id)
     {
         for (int i = 0; i < WorkExperiences.Length; i++)
         {
@@ -174,8 +182,8 @@ public class Person
                 return WorkExperiences[i];
             }
         }
-        
-        throw new ArgumentException("Work Experience entity with id ${id} is not found.");
+
+        return null;
     }
 
     /// <summary>
@@ -217,15 +225,18 @@ public class Person
     /// Удалить сущность WorkExperience по id
     /// </summary>
     /// <param name="id"></param>
-    public void DeleteWorkExperienceById(int id)
+    /// <returns></returns>
+    public bool DeleteWorkExperienceById(int id)
     {
         for (int i = 0; i < WorkExperiences.Length; i++)
         {
             if (WorkExperiences[i].ID == id){
                 WorkExperiences = [.. WorkExperiences[..i], .. WorkExperiences[(i + 1)..]];
-                return;
+                return true;
             }
         }
+
+        return false;
     }
     
 }

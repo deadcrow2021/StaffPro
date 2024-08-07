@@ -87,7 +87,7 @@ public class WorkExperience
     /// <param name="organization"></param>
     public void SetOrganization(string organization)
     {
-        Position = CheckLength(organization);
+        Organization = CheckLength(organization);
     }
 
     /// <summary>
@@ -96,7 +96,7 @@ public class WorkExperience
     /// <param name="description"></param>
     public void SetDescription(string description)
     {
-        Position = description;
+        Description = description;
     }
 
     /// <summary>
@@ -104,7 +104,7 @@ public class WorkExperience
     /// </summary>
     /// <param name="city"></param>
     /// <param name="country"></param>
-    public void SetAddress(string city, string country)
+    public void SetAddress(string city = "", string country = "")
     {
         JobAddress = new Address(city, country);
     }

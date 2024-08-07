@@ -22,7 +22,7 @@ public class Avatar
 
     private static string ValidateURL(string avatarURL)
     {
-        if (avatarURL.EndsWith(".png") || avatarURL.EndsWith(".jpg"))
+        if ( Path.IsPathRooted(avatarURL) && (avatarURL.EndsWith(".png") || avatarURL.EndsWith(".jpg")) )
         {
             return avatarURL;
         }

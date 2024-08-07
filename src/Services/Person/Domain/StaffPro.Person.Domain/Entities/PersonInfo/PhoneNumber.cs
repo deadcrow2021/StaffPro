@@ -24,7 +24,7 @@ public class PhoneNumber
 
     private static string ValidatePhoneNumber(string phoneNumber)
     {
-        if ( Regex.IsMatch(phoneNumber, @"\+7\d{10}"))
+        if ( !Regex.IsMatch(phoneNumber, @"[\+7|8]\d{10}") )
         {
             throw new ArgumentException("Phone number format is not valid.");
         }
