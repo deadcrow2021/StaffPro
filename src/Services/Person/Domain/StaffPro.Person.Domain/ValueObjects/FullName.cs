@@ -1,12 +1,12 @@
 using System.Text.RegularExpressions;
+using StaffPro.Person.Domain.Exceptions;
 
-
-namespace StaffPro.Person.Domain.Entities.PersonInfo;
+namespace StaffPro.Person.Domain.ValueObjects;
 
 /// <summary>
 /// Класс ФИО сущности Person
 /// </summary>
-public class FIO
+public class FullName
 {
     /// <summary>
     /// Имя
@@ -30,7 +30,7 @@ public class FIO
     /// <param name="firstName"></param>
     /// <param name="lastName"></param>
     /// <param name="patronymic"></param>
-    public FIO(string firstName, string lastName, string patronymic)
+    public FullName(string firstName, string lastName, string patronymic)
     {
         FirstName = ValidateName(firstName);
         LastName = ValidateName(lastName);
@@ -39,9 +39,14 @@ public class FIO
 
     private static string ValidateName(string nameStr)
     {
-        if (nameStr.Length < 3 || nameStr.Length > 60)
+        if (nameStr.Length < 3)
         {
-            throw new ArgumentException("Name string is too short or too long.");
+            throw new ShortStringException(3);
+        }
+
+        if (nameStr.Length > 60)
+        {
+            throw new LongStringException(60);
         }
 
         if ( !Regex.IsMatch(nameStr, @"^[a-zA-Z]+$") ) {

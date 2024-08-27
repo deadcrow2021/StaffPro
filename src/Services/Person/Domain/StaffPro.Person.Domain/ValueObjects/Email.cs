@@ -1,8 +1,8 @@
 using System.Text.RegularExpressions;
 using System.Globalization;
+using StaffPro.Person.Domain.Exceptions;
 
-
-namespace StaffPro.Person.Domain.Entities.PersonInfo;
+namespace StaffPro.Person.Domain.ValueObjects;
 
 /// <summary>
 /// Класс Email сущности Person
@@ -28,7 +28,7 @@ public class Email
     {
         if (email.Length > 255)
         {
-            throw new ArgumentException("Email string is too long.");
+            throw new LongStringException(255);
         }
 
         if (!IsValidEmailFormat(email))

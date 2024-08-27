@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace StaffPro.Person.Domain.Entities.PersonInfo;
+namespace StaffPro.Person.Domain.ValueObjects;
 
 /// <summary>
 /// Класс Номер телефона сущности Person

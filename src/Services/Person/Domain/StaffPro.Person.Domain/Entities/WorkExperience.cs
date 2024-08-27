@@ -1,13 +1,17 @@
-using StaffPro.Person.Domain.Entities.WorkExperienceInfo;
+using StaffPro.Person.Domain.ValueObjects;
+using StaffPro.Person.Domain.Exceptions;
 
-namespace StaffPro.Person.Domain.Entities.WorkExperienceEntity;
+namespace StaffPro.Person.Domain.Entities;
 
+/// <summary>
+/// Опыт работы
+/// </summary>
 public class WorkExperience
 {
     /// <summary>
     /// ID
     /// </summary>
-    public int ID { get; private set; }
+    public int Id { get; private set; }
 
     /// <summary>
     /// Должность
@@ -22,7 +26,7 @@ public class WorkExperience
     /// <summary>
     /// Организация
     /// </summary>
-    public Address JobAddress { get; private set;}
+    public Address Address { get; private set;}
 
     /// <summary>
     /// Описание
@@ -61,11 +65,11 @@ public class WorkExperience
             string country = ""
             )
     {
-        ID = id;
+        Id = id;
         Position = CheckLength(position);
         Organization = organization;
         Description = description;
-        JobAddress = new Address(city, country);
+        Address = new Address(CheckLength(city), CheckLength(country));
     
         CompareEmploymentAndFiringDates(employmentDate, firingDate);
         EmploymentDate = employmentDate;
@@ -106,7 +110,7 @@ public class WorkExperience
     /// <param name="country"></param>
     public void SetAddress(string city = "", string country = "")
     {
-        JobAddress = new Address(city, country);
+        Address = new Address(CheckLength(city), CheckLength(country));
     }
 
     /// <summary>
@@ -141,7 +145,7 @@ public class WorkExperience
     {
         if (position.Length > 250)
         {
-            throw new ArgumentException("Property is too long");
+            throw new LongStringException(250);
         }
 
         return position;

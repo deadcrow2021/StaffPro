@@ -1,56 +1,57 @@
-using StaffPro.Person.Domain.Entities.WorkExperienceEntity;
-using StaffPro.Person.Domain.Entities.PersonInfo;
+using StaffPro.Person.Domain.ValueObjects;
+using StaffPro.Person.Domain.Enums;
 
+namespace StaffPro.Person.Domain.Entities;
 
-namespace StaffPro.Person.Domain.Entities.Person;
-
-
+/// <summary>
+/// Сущность Person
+/// </summary>
 public class Person
 {
     /// <summary>
-    /// ID
+    /// Id
     /// </summary>
-    public int ID { get; private set; }
+    public int Id { get; private set; }
 
     /// <summary>
     /// ФИО
     /// </summary>
-    public FIO Fio { get; private set; }
+    public FullName FullName { get; private set; }
     
     /// <summary>
     /// Email
     /// </summary>
-    public Email EmailProp { get; private set; }
+    public Email Email { get; private set; }
     
     /// <summary>
     /// Номер телефона
     /// </summary>
-    public PhoneNumber PhoneNumberProp { get; private set; }
+    public PhoneNumber PhoneNumber { get; private set; }
     
     /// <summary>
     /// Дата рождения
     /// </summary>
-    public BirthDay BirthDayProp { get; private set; }
+    public DateTime BirthDay { get; set; }
     
     /// <summary>
     /// URL аватара
     /// </summary>
-    public Avatar AvatarUrl { get; private set; }
+    public Avatar Avatar { get; private set; }
 
     /// <summary>
     /// Пол
     /// </summary>
-    public Gender GenderProp { get; private set; }
+    public eGender Gender { get; private set; }
     
     /// <summary>
     /// Замечание/Комментарий
     /// </summary>
-    public Comment CommentProp { get; private set; }
+    public string? Comment { get; set; }
     
     /// <summary>
     /// Список опыта работы
     /// </summary>
-    public WorkExperience[] WorkExperiences { get; private set; }
+    public List<WorkExperience> WorkExperiences { get; private set; }
 
     /// <summary>
     /// 
@@ -63,7 +64,7 @@ public class Person
     /// <param name="day"></param>
     /// <param name="month"></param>
     /// <param name="year"></param>
-    /// <param name="avatarURL"></param>
+    /// <param name="avatar"></param>
     /// <param name="gender"></param>
     /// <param name="comment"></param>
     public Person(
@@ -76,31 +77,31 @@ public class Person
         int day,
         int month,
         int year,
-        string avatarURL,
-        Gender gender,
-        string comment = ""
+        string avatar,
+        eGender gender,
+        string? comment = null
         )
     {
-        ID = id;
-        Fio = new(firstName, lastName, patronymic);
-        EmailProp = new(email);
-        PhoneNumberProp = new(phoneNumber);
-        BirthDayProp = new(day, month, year);
-        AvatarUrl = new(avatarURL);
-        GenderProp = gender;
-        CommentProp = new(comment);
+        Id = id;
+        FullName = new(firstName, lastName, patronymic);
+        Email = new(email);
+        PhoneNumber = new(phoneNumber);
+        BirthDay = new(year, month, day);
+        Avatar = new(avatar);
+        Gender = gender;
+        Comment = comment;
         WorkExperiences = [];
     }
 
     /// <summary>
-    /// Изменить ФИО
+    /// Изменить ФИО сущности Person
     /// </summary>
     /// <param name="firstName"></param>
     /// <param name="lastName"></param>
     /// <param name="patronymic"></param>
-    public void SetFIO(string firstName, string lastName, string patronymic)
+    public void SetFullName(string firstName, string lastName, string patronymic)
     {
-        Fio = new(firstName, lastName, patronymic);
+        FullName = new(firstName, lastName, patronymic);
     }
 
     /// <summary>
@@ -109,7 +110,7 @@ public class Person
     /// <param name="email"></param>
     public void SetEmail(string email)
     {
-        EmailProp = new(email);
+        Email = new(email);
     }
 
     /// <summary>
@@ -118,72 +119,35 @@ public class Person
     /// <param name="phoneNumber"></param>
     public void SetPhoneNumber(string phoneNumber)
     {
-        PhoneNumberProp = new(phoneNumber);
-    }
-
-    /// <summary>
-    /// Изменить дату рождения
-    /// </summary>
-    /// <param name="day"></param>
-    /// <param name="month"></param>
-    /// <param name="year"></param>
-    public void SetBirthDate(int day, int month, int year)
-    {
-        BirthDayProp = new(day, month, year);
+        PhoneNumber = new(phoneNumber);
     }
 
     /// <summary>
     /// Изменить ссылку на аватар
     /// </summary>
-    /// <param name="avatarURL"></param>
-    public void SetAvatar(string avatarURL)
+    /// <param name="avatar"></param>
+    public void SetAvatar(string avatar)
     {
-        AvatarUrl = new(avatarURL);
+        Avatar = new(avatar);
     }
     
     /// <summary>
     /// Изменить пол
     /// </summary>
     /// <param name="gender"></param>
-    public void SetGender(Gender gender)
+    public void SetGender(eGender gender)
     {
-        GenderProp = gender;
-    }
-    
-    /// <summary>
-    /// изменить комментарий/замечание
-    /// </summary>
-    /// <param name="comment"></param>
-    public void SetComment(string comment)
-    {
-        CommentProp = new(comment);
+        Gender = gender;
     }
 
     /// <summary>
-    /// Получить список опытов работы
-    /// </summary>
-    /// <returns></returns>
-    public WorkExperience[] GetWorkExperiencesList()
-    {
-        return WorkExperiences;
-    }
-
-    /// <summary>
-    /// Получить сущность WorkExperience
+    /// Получить сущность WorkExperience по книальному идентификатору
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
     public WorkExperience? GetWorkExperienceById(int id)
     {
-        for (int i = 0; i < WorkExperiences.Length; i++)
-        {
-            if (WorkExperiences[i].ID == id)
-            {
-                return WorkExperiences[i];
-            }
-        }
-
-        return null;
+        return WorkExperiences.FirstOrDefault(we => we.Id == id);
     }
 
     /// <summary>
@@ -218,7 +182,7 @@ public class Person
             city,
             country
             );
-        WorkExperiences = [.. WorkExperiences, workExperience];
+        WorkExperiences.Add(workExperience);
     }
 
     /// <summary>
@@ -228,15 +192,16 @@ public class Person
     /// <returns></returns>
     public bool DeleteWorkExperienceById(int id)
     {
-        for (int i = 0; i < WorkExperiences.Length; i++)
+        WorkExperience? we = GetWorkExperienceById(id);
+        if (we == null)
         {
-            if (WorkExperiences[i].ID == id){
-                WorkExperiences = [.. WorkExperiences[..i], .. WorkExperiences[(i + 1)..]];
-                return true;
-            }
+            return false;
         }
-
-        return false;
+        else
+        {
+            WorkExperiences.Remove(we);
+            return true;
+        }
     }
     
 }

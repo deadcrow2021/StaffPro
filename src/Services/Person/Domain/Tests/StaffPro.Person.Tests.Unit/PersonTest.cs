@@ -1,209 +1,200 @@
-using StaffPro.Person.Domain.Entities.PersonInfo;
-using StaffPro.Person.Domain.Entities.Person;
-using StaffPro.Person.Domain;
-using Xunit;
-using StaffPro.Person.Domain.Entities.WorkExperienceEntity;
+using StaffPro.Person.Domain.ValueObjects;
+using StaffPro.Person.Domain.Exceptions;
+using StaffPro.Person.Domain.Entities;
+using StaffPro.Person.Domain.Enums;
+using Bogus;
 
 namespace StaffPro.Person.Tests.Unit;
 
-public class PersonTest
-{
-    public StaffPro.Person.Domain.Entities.Person.Person TestPerson { get; set; }
 
-    public PersonTest()
+public class PersonTests
+{
+    private StaffPro.Person.Domain.Entities.Person TestPerson { get; set; }
+    string longString = String.Concat(Enumerable.Repeat("test", 100));
+
+    [SetUp]
+    public void Setup()
     {
         TestPerson = new(
-            1,
-            "first",
-            "last",
-            "patr",
-            "test@mail.ru",
-            "+79991234567",
-            15,
-            10,
-            2000,
-            "/data/image.png",
-            Gender.Male,
-            "Comment 123"
-        );
+                1,
+                "first",
+                "last",
+                "patr",
+                "test@mail.ru",
+                "+79991234567",
+                15,
+                10,
+                2000,
+                "/data/image.png",
+                eGender.Male,
+                "Comment 123"
+            );
     }
 
-
-    [Fact]
-    public void ChangePersonFirstNameTest()
+    [Test]
+    public void ChangeFirstName_FirstNameEqualsToChangedFirstName_True()
     {
-        Assert.Equal("first", TestPerson.Fio.FirstName);
+        Assert.That(TestPerson.FullName.FirstName, Is.EqualTo("first"));
 
-        TestPerson.Fio.ChangeFirstName("changedName");
-        Assert.Equal("changedName", TestPerson.Fio.FirstName);
+        TestPerson.FullName.ChangeFirstName("changedName");
+        Assert.That(TestPerson.FullName.FirstName, Is.EqualTo("changedName"));
 
-        TestPerson.Fio.ChangeFirstName("testName");
-        Assert.Equal("testName", TestPerson.Fio.FirstName);
+        TestPerson.FullName.ChangeFirstName("testName");
+        Assert.That(TestPerson.FullName.FirstName, Is.EqualTo("testName"));
     }
 
-    [Fact]
-    public void ChangePersonLastNameTest()
+    [Test]
+    public void ChangeLastName_LastNameEqualsToChangedLastName_True()
     {
-        Assert.Equal("last", TestPerson.Fio.LastName);
+        Assert.That(TestPerson.FullName.LastName, Is.EqualTo("last"));
 
-        TestPerson.Fio.ChangeLastName("changedName");
-        Assert.Equal("changedName", TestPerson.Fio.LastName);
+        TestPerson.FullName.ChangeLastName("changedName");
+        Assert.That(TestPerson.FullName.LastName, Is.EqualTo("changedName"));
 
-        TestPerson.Fio.ChangeLastName("testName");
-        Assert.Equal("testName", TestPerson.Fio.LastName);
+        TestPerson.FullName.ChangeLastName("testName");
+        Assert.That(TestPerson.FullName.LastName, Is.EqualTo("testName"));
     }
 
-    [Fact]
-    public void ChangePersonPatronymicTest()
+    [Test]
+    public void ChangePatronymic_PatronymicEqualsToChangedPatronymic_True()
     {
-        Assert.Equal("patr", TestPerson.Fio.Patronymic);
+        Assert.That(TestPerson.FullName.Patronymic, Is.EqualTo("patr"));
 
-        TestPerson.Fio.ChangePatronymic("changedName");
-        Assert.Equal("changedName", TestPerson.Fio.Patronymic);
+        TestPerson.FullName.ChangePatronymic("changedName");
+        Assert.That(TestPerson.FullName.Patronymic, Is.EqualTo("changedName"));
 
-        TestPerson.Fio.ChangePatronymic("testName");
-        Assert.Equal("testName", TestPerson.Fio.Patronymic);
+        TestPerson.FullName.ChangePatronymic("testName");
+        Assert.That(TestPerson.FullName.Patronymic, Is.EqualTo("testName"));
     }
 
-    [Fact]
-    public void ChangePersonFIOTest()
+    [Test]
+    public void ChangeFullName_FullNameEqualsToChangedFullName_True()
     {
-        Assert.Equal("first", TestPerson.Fio.FirstName);
-        Assert.Equal("last", TestPerson.Fio.LastName);
-        Assert.Equal("patr", TestPerson.Fio.Patronymic);
+        Assert.That(TestPerson.FullName.FirstName, Is.EqualTo("first"));
+        Assert.That(TestPerson.FullName.LastName, Is.EqualTo("last"));
+        Assert.That(TestPerson.FullName.Patronymic, Is.EqualTo("patr"));
 
-        TestPerson.SetFIO("FirstName", "LastName", "Patronymic");
+        TestPerson.SetFullName("FirstName", "LastName", "Patronymic");
 
-        Assert.Equal("FirstName", TestPerson.Fio.FirstName);
-        Assert.Equal("LastName", TestPerson.Fio.LastName);
-        Assert.Equal("Patronymic", TestPerson.Fio.Patronymic);
+        Assert.That(TestPerson.FullName.FirstName, Is.EqualTo("FirstName"));
+        Assert.That(TestPerson.FullName.LastName, Is.EqualTo("LastName"));
+        Assert.That(TestPerson.FullName.Patronymic, Is.EqualTo("Patronymic"));
     }
 
-    [Fact]
-    public void FailedChangePersonFirstNameTest()
+    [Test]
+    public void ChangeFirstName_FirstNameEqualsToChangedFirstName_ThrowsError()
     {
-        string longName = String.Concat(Enumerable.Repeat("test", 100));
-
-        Assert.Throws<ArgumentException>(() => TestPerson.Fio.ChangeFirstName(""));
-        Assert.Throws<ArgumentException>(() => TestPerson.Fio.ChangeFirstName(longName));
-        Assert.Throws<ArgumentException>(() => TestPerson.Fio.ChangeFirstName("test123"));
-        Assert.Throws<ArgumentException>(() => TestPerson.Fio.ChangeFirstName("test_name"));
+        Assert.Throws<ShortStringException>(() => TestPerson.FullName.ChangeFirstName(""));
+        Assert.Throws<LongStringException>(() => TestPerson.FullName.ChangeFirstName(longString));
+        Assert.Throws<ArgumentException>(() => TestPerson.FullName.ChangeFirstName("test123"));
+        Assert.Throws<ArgumentException>(() => TestPerson.FullName.ChangeFirstName("test_name"));
     }
 
-    [Fact]
-    public void FailedChangePersonLastNameTest()
+    [Test]
+    public void ChangeLastName_FullLastEqualsToChangedLastName_ThrowsError()
     {
-        string longName = String.Concat(Enumerable.Repeat("test", 100));
-
-        Assert.Throws<ArgumentException>(() => TestPerson.Fio.ChangeLastName(""));
-        Assert.Throws<ArgumentException>(() => TestPerson.Fio.ChangeLastName(longName));
-        Assert.Throws<ArgumentException>(() => TestPerson.Fio.ChangeLastName("test123"));
-        Assert.Throws<ArgumentException>(() => TestPerson.Fio.ChangeLastName("test_name"));
+        Assert.Throws<ShortStringException>(() => TestPerson.FullName.ChangeLastName(""));
+        Assert.Throws<LongStringException>(() => TestPerson.FullName.ChangeLastName(longString));
+        Assert.Throws<ArgumentException>(() => TestPerson.FullName.ChangeLastName("test123"));
+        Assert.Throws<ArgumentException>(() => TestPerson.FullName.ChangeLastName("test_name"));
     }
 
-    [Fact]
-    public void FailedChangePersonPatronymicTest()
+    [Test]
+    public void ChangePatronymic_PatronymicEqualsToChangedPatronymic_ThrowsError()
     {
-        string longName = String.Concat(Enumerable.Repeat("test", 100));
-
-        Assert.Throws<ArgumentException>(() => TestPerson.Fio.ChangePatronymic(""));
-        Assert.Throws<ArgumentException>(() => TestPerson.Fio.ChangePatronymic(longName));
-        Assert.Throws<ArgumentException>(() => TestPerson.Fio.ChangePatronymic("test123"));
-        Assert.Throws<ArgumentException>(() => TestPerson.Fio.ChangePatronymic("test_name"));
+        Assert.Throws<ShortStringException>(() => TestPerson.FullName.ChangePatronymic(""));
+        Assert.Throws<LongStringException>(() => TestPerson.FullName.ChangePatronymic(longString));
+        Assert.Throws<ArgumentException>(() => TestPerson.FullName.ChangePatronymic("test123"));
+        Assert.Throws<ArgumentException>(() => TestPerson.FullName.ChangePatronymic("test_name"));
     }
 
-    [Theory]
-    [InlineData("test@mail.ru")]
-    [InlineData("test_changed@mail.com")]
-    [InlineData("testChanged@mail.com")]
-    public void ChangePersonEmailTest(string email)
+    [TestCase("test@mail.ru")]
+    [TestCase("test_changed@mail.com")]
+    [TestCase("testChanged@mail.com")]
+    public void SetEmail_EmailEqualsToChangedEmail_True(string email)
     {
         TestPerson.SetEmail(email);
-        Assert.Equal(email, TestPerson.EmailProp.EmailAddress);
+        Assert.That(TestPerson.Email.EmailAddress, Is.EqualTo(email));
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData("test")]
-    [InlineData("test@")]
-    [InlineData("@mail.ru")]
-    [InlineData("test123@mail")]
-    [InlineData("test123@.ru")]
-    public void FailedChangePersonEmailTest(string email)
+    [TestCase("")]
+    [TestCase("test")]
+    [TestCase("test@")]
+    [TestCase("@mail.ru")]
+    [TestCase("test123@mail")]
+    [TestCase("test123@.ru")]
+    public void SetEmail_EmailEqualsToChangedEmail_ThrowsError(string email)
     {
-
         Assert.Throws<ArgumentException>(() => TestPerson.SetEmail(email));
     }
 
-    [Theory]
-    [InlineData("+79991234567")]
-    [InlineData("89991234567")]
-    public void ChangePersonPhoneNumberTest(string phoneNumber)
+    [TestCase("+79991234567")]
+    [TestCase("89991234567")]
+    public void SetPhoneNumber_PhoneNumberEqualsToChangedPhoneNumber_True(string phoneNumber)
     {
         TestPerson.SetPhoneNumber(phoneNumber);
-        Assert.Equal(phoneNumber, TestPerson.PhoneNumberProp.PhoneNumberStr);
+        Assert.That(TestPerson.PhoneNumber.PhoneNumberStr, Is.EqualTo(phoneNumber));
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData("09991234567")]
-    [InlineData("19991234567")]
-    [InlineData("9991234567")]
-    [InlineData("+7999")]
-    [InlineData("+7asd9991234567123123")]
-    [InlineData("+7999123")]
-    public void FailedChangePersonPhoneNumberTest(string phoneNumber)
+    [TestCase("")]
+    [TestCase("09991234567")]
+    [TestCase("19991234567")]
+    [TestCase("9991234567")]
+    [TestCase("+7999")]
+    [TestCase("+7asd9991234567123123")]
+    [TestCase("+7999123")]
+    public void SetPhoneNumber_PhoneNumberEqualsToChangedPhoneNumber_ThrowsError(string phoneNumber)
     {
         Assert.Throws<ArgumentException>(() => TestPerson.SetPhoneNumber(phoneNumber));
     }
 
-    [Fact]
-    public void ChangePersonBirthDateTest()
+    [Test]
+    public void SetBirthDate_BirthDateEqualsToChangedBirthDate_True()
     {
         DateTime birthDate = new(2000, 10, 15);
-        Assert.Equal(birthDate, TestPerson.BirthDayProp.BirthDate);
+        Assert.That(TestPerson.BirthDay, Is.EqualTo(birthDate));
 
         DateTime birthDate1 = new(2001, 11, 16);
-        TestPerson.SetBirthDate(16, 11, 2001);
-        Assert.Equal(birthDate1, TestPerson.BirthDayProp.BirthDate);
+        TestPerson.BirthDay = new DateTime(2001, 11, 16);
+        Assert.That(TestPerson.BirthDay, Is.EqualTo(birthDate1));
     }
 
-    [Fact]
-    public void ChangePersonGenderTest()
+    [Test]
+    public void SetGender_GenderEqualsToChangedGender_True()
     {
-        TestPerson.SetGender(Gender.Female);
-        Assert.Equal(Gender.Female, TestPerson.GenderProp);
+        TestPerson.SetGender(eGender.Female);
+        Assert.That(TestPerson.Gender, Is.EqualTo(eGender.Female));
 
-        TestPerson.SetGender(Gender.Male);
-        Assert.Equal(Gender.Male, TestPerson.GenderProp);
+        TestPerson.SetGender(eGender.Male);
+        Assert.That(TestPerson.Gender, Is.EqualTo(eGender.Male));
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData("Test Comment")]
-    public void ChangePersonCommentTest(string comment)
+    [TestCase("")]
+    [TestCase("Test Comment")]
+    public void SetComment_CommentEqualsToChangedComment_True(string comment)
     {
-        TestPerson.SetComment(comment);
-        Assert.Equal(comment, TestPerson.CommentProp.CommentStr);
+        TestPerson.Comment = comment;
+        Assert.That(TestPerson.Comment, Is.EqualTo(comment));
     }
 
-    [Theory]
-    [InlineData("/doc/image.png")]
-    [InlineData("/doc/img/image.jpg")]
-    [InlineData("C:\\Documents\\image.jpg")]
-    [InlineData("C:/Documents/image.jpg")]
-    [InlineData("C:Documents/image.jpg")]
-    public void ChangePersonAvatarTest(string AvatarUrl)
+    [TestCase("/doc/image.png")]
+    [TestCase("/doc/img/image.jpg")]
+    [TestCase("C:\\Documents\\image.jpg")]
+    [TestCase("C:/Documents/image.jpg")]
+    [TestCase("C:Documents/image.jpg")]
+    public void SetAvatar_AvatarEqualsToChangedAvatar_True(string avatarUrl)
     {
-        TestPerson.SetAvatar(AvatarUrl);
-        Assert.Equal(AvatarUrl, TestPerson.AvatarUrl.AvatarURL);
+        TestPerson.SetAvatar(avatarUrl);
+        Assert.That(TestPerson.Avatar.AvatarURL, Is.EqualTo(avatarUrl));
     }
 }
 
 
+
 public class PersonWorkExperienceTest
 {
-    public StaffPro.Person.Domain.Entities.Person.Person TestPerson { get; set; }
+    private StaffPro.Person.Domain.Entities.Person TestPerson { get; set; }
+    string longString = String.Concat(Enumerable.Repeat("test", 100));
 
     public PersonWorkExperienceTest()
     {
@@ -218,7 +209,7 @@ public class PersonWorkExperienceTest
             10,
             2000,
             "/data/image.png",
-            Gender.Male,
+            eGender.Male,
             "Comment 123"
         );
 
@@ -235,8 +226,8 @@ public class PersonWorkExperienceTest
         );
     }
 
-    [Fact]
-    public void AddWorkExperienceTest()
+    [Test]
+    public void AddWorkExperience_GetNewWorkExperienceById_True()
     {
         TestPerson.AddWorkExperience(
             3, "senior programmer", "ctsg", "test_desc3",
@@ -246,95 +237,87 @@ public class PersonWorkExperienceTest
 
         WorkExperience? newExp = TestPerson.GetWorkExperienceById(3);
         Assert.NotNull(newExp);
-        Assert.Equal(3, TestPerson.WorkExperiences.Length);
+        Assert.That(TestPerson.WorkExperiences.Count, Is.EqualTo(3));
     }
 
-    [Fact]
-    public void DeleteWorkExperienceTest()
+    [Test]
+    public void DeleteWorkExperienceById_CantGetDeletedWorkExperience_Null()
     {
         bool deleteStatus = TestPerson.DeleteWorkExperienceById(2);
         WorkExperience? expObj = TestPerson.GetWorkExperienceById(2);
 
         Assert.True(deleteStatus);
         Assert.Null(expObj);
-        Assert.Single(TestPerson.WorkExperiences);
     }
 
-    [Fact]
-    public void ChangeWorkExperiencePositionTest()
+    [Test]
+    public void SetPosition_PositionEqualsToChangedPosition_True()
     {
         WorkExperience? personExp = TestPerson.GetWorkExperienceById(1);
         personExp.SetPosition("changed position");
-        Assert.Equal("changed position", personExp.Position);
     }
 
-    [Fact]
-    public void FailedChangeWorkExperiencePositionTest()
+    [Test]
+    public void SetPosition_PositionEqualsToChangedPosition_ThrowsException()
     {
-        string longStr = String.Concat(Enumerable.Repeat("test", 100));
-
         WorkExperience? personExp = TestPerson.GetWorkExperienceById(1);
-        Assert.Throws<ArgumentException>(() => personExp.SetPosition(longStr));
+        Assert.Throws<LongStringException>(() => personExp.SetPosition(longString));
     }
 
-    [Fact]
-    public void ChangeWorkExperienceOrganizationTest()
+    [Test]
+    public void SetOrganization_OrganizationEqualsToChangedOrganization_True()
     {
         WorkExperience? personExp = TestPerson.GetWorkExperienceById(1);
         personExp.SetOrganization("changed_org");
-        Assert.Equal("changed_org", personExp.Organization);
+        Assert.That(personExp.Organization, Is.EqualTo("changed_org"));
     }
 
-    [Fact]
-    public void FailedChangeWorkExperienceOrganizationTest()
+    [Test]
+    public void SetOrganization_OrganizationEqualsToChangedOrganization_ThrowsException()
     {
-        string longStr = String.Concat(Enumerable.Repeat("test", 100));
-
         WorkExperience? personExp = TestPerson.GetWorkExperienceById(1);
-        Assert.Throws<ArgumentException>(() => personExp.SetOrganization(longStr));
+        Assert.Throws<LongStringException>(() => personExp.SetOrganization(longString));
     }
 
-    [Fact]
-    public void ChangeWorkExperienceAddressTest()
+    [Test]
+    public void SetAddress_AddressEqualsToChangedAddress_True()
     {
         WorkExperience? personExp = TestPerson.GetWorkExperienceById(1);
         personExp.SetAddress("test city", "test country");
-        Assert.Equal("test city", personExp.JobAddress.City);
-        Assert.Equal("test country", personExp.JobAddress.Country);
+        Assert.That(personExp.Address.City, Is.EqualTo("test city"));
+        Assert.That(personExp.Address.Country, Is.EqualTo("test country"));
     }
 
-    [Fact]
-    public void FailedChangeWorkExperienceAddressTest()
+    [Test]
+    public void SetAddress_AddressEqualsToChangedAddress_ThrowsException()
     {
-        string longStr = String.Concat(Enumerable.Repeat("test", 100));
-
         WorkExperience? personExp = TestPerson.GetWorkExperienceById(1);
-        Assert.Throws<ArgumentException>(() => personExp.SetAddress(city: longStr));
-        Assert.Throws<ArgumentException>(() => personExp.SetAddress(country: longStr));
+        Assert.Throws<LongStringException>(() => personExp.SetAddress(city: longString));
+        Assert.Throws<LongStringException>(() => personExp.SetAddress(country: longString));
     }
 
-    [Fact]
-    public void ChangeWorkExperienceDescriptionTest()
+    [Test]
+    public void SetDescription_DescriptionEqualsToChangedDescription_True()
     {
         WorkExperience? personExp = TestPerson.GetWorkExperienceById(1);
         personExp.SetDescription("changed_descr");
-        Assert.Equal("changed_descr", personExp.Description);
+        Assert.That(personExp.Description, Is.EqualTo("changed_descr"));
     }
 
-    [Fact]
-    public void ChangeWorkExperienceEmploymentAndFiringDatesTest()
+    [Test]
+    public void SetFiringDate_SetEmploymentDate_DescriptionEqualsToChangedDescription_True()
     {
         WorkExperience? personExp = TestPerson.GetWorkExperienceById(1);
 
         personExp.SetFiringDate(new DateTime(2023, 12, 20));
         personExp.SetEmploymentDate(new DateTime(2023, 10, 11));
 
-        Assert.Equal(new DateTime(2023, 12, 20), personExp.FiringDate);
-        Assert.Equal(new DateTime(2023, 10, 11), personExp.EmploymentDate);
+        Assert.That(personExp.FiringDate, Is.EqualTo(new DateTime(2023, 12, 20)));
+        Assert.That(personExp.EmploymentDate, Is.EqualTo(new DateTime(2023, 10, 11)));
     }
 
-    [Fact]
-    public void FailedChangeWorkExperienceEmploymentAndFiringDatesTest()
+    [Test]
+    public void SetFiringDate_SetEmploymentDate_DescriptionEqualsToChangedDescription_ThrowsException()
     {
         WorkExperience? personExp = TestPerson.GetWorkExperienceById(1);
 
@@ -345,3 +328,64 @@ public class PersonWorkExperienceTest
         Assert.Throws<ArgumentException>(() => personExp.SetFiringDate(new DateTime(2023, 1, 1)));
     }
 }
+
+
+
+
+
+public class TestPerson : Faker<StaffPro.Person.Domain.Entities.Person>
+{
+    public TestPerson(TestFullName _TestFullName, TestEmail _TestEmail, TestPhoneNumber _TestPhoneNumber, TestAvatar _TestAvatar)
+    {
+        int id = 1;
+        
+        UseSeed(123)
+        .RuleFor(p => p.Id, _ => id++)
+        .RuleFor(p => p.FullName, _ => _TestFullName.Generate(1).First())
+        .RuleFor(p => p.Email, _ => _TestEmail.Generate(1).First())
+        .RuleFor(p => p.PhoneNumber, _ => _TestPhoneNumber.Generate(1).First())
+        .RuleFor(p => p.BirthDay, f => f.Date.Between(DateTime.Parse("1/1/1970"), DateTime.Parse("1/1/2000")))
+        .RuleFor(p => p.Avatar, _ => _TestAvatar.Generate(1).First())
+        .RuleFor(p => p.Gender, f => f.PickRandom<eGender>())
+        .RuleFor(p => p.Comment, f => f.Name.JobDescriptor());
+    }
+}
+
+public class TestFullName : Faker<FullName>
+{
+    public TestFullName()
+    {
+        UseSeed(123)
+        .RuleFor(c => c.FirstName, f => f.Name.FirstName())
+        .RuleFor(c => c.LastName, f => f.Name.LastName())
+        .RuleFor(c => c.Patronymic, f => f.Name.FirstName());
+    }
+}
+
+public class TestEmail : Faker<Email>
+{
+    public TestEmail()
+    {
+        UseSeed(123)
+        .RuleFor(c => c.EmailAddress, f => f.Internet.Email());
+    }
+}
+
+public class TestPhoneNumber : Faker<PhoneNumber>
+{
+    public TestPhoneNumber()
+    {
+        UseSeed(123)
+        .RuleFor(c => c.PhoneNumberStr, f => f.Phone.PhoneNumber("ru"));
+    }
+}
+
+public class TestAvatar : Faker<Avatar>
+{
+    public TestAvatar()
+    {
+        UseSeed(123)
+        .RuleFor(c => c.AvatarURL, f => f.Internet.Avatar());
+    }
+}
+

@@ -1,4 +1,4 @@
-namespace StaffPro.Person.Domain.Entities.WorkExperienceInfo;
+namespace StaffPro.Person.Domain.ValueObjects;
 
 /// <summary>
 /// Класс ФИО сущности Person
@@ -8,22 +8,22 @@ public class Address
     /// <summary>
     /// Имя
     /// </summary>
-    public string City { get; private set; }
+    public string? City { get; private set; }
 
     /// <summary>
     /// Фамилия
     /// </summary>
-    public string Country { get; private set; }
+    public string? Country { get; private set; }
 
     /// <summary>
     /// Конструктор класса Адреса
     /// </summary>
     /// <param name="city"></param>
     /// <param name="country"></param>
-    public Address(string city = "", string country = "")
+    public Address(string? city = null, string? country = null)
     {
-        City = ValidateAddress(city);
-        Country = ValidateAddress(country);
+        City = city;
+        Country = country;
     }
 
     /// <summary>
@@ -32,7 +32,7 @@ public class Address
     /// <param name="city"></param>
     public void ChangeCity(string city)
     {
-        City = ValidateAddress(city);
+        City = city;
     }
 
     /// <summary>
@@ -41,16 +41,6 @@ public class Address
     /// <param name="country"></param>
     public void ChangeCountry(string country)
     {
-        Country = ValidateAddress(country);
-    }
-
-    private static string ValidateAddress(string address)
-    {
-        if (address.Length > 250)
-        {
-            throw new ArgumentException("Address is too long.");
-        }
-
-        return address;
+        Country = country;
     }
 }

@@ -1,4 +1,4 @@
-namespace StaffPro.Person.Domain.Entities.PersonInfo;
+namespace StaffPro.Person.Domain.ValueObjects;
 
 /// <summary>
 /// URL аватара сущности Person
@@ -8,7 +8,7 @@ public class Avatar
     /// <summary>
     /// URL аватара
     /// </summary>
-    public string AvatarURL { get; private set; }
+    public string AvatarURL { get; init; }
 
     /// <summary>
     /// Конструктор класса Avatar
@@ -19,7 +19,6 @@ public class Avatar
         AvatarURL = ValidateURL(avatarURL);
     }
 
-
     private static string ValidateURL(string avatarURL)
     {
         if ( Path.IsPathRooted(avatarURL) && (avatarURL.EndsWith(".png") || avatarURL.EndsWith(".jpg")) )
@@ -29,14 +28,4 @@ public class Avatar
 
         throw new ArgumentException("Avatar URL is not valid.");
     }
-
-    /// <summary>
-    /// Изменить URL аватара
-    /// </summary>
-    /// <param name="avatarURL"></param>
-    public void ChangeAvatarURL(string avatarURL)
-    {
-        AvatarURL = ValidateURL(avatarURL);
-    }
-
 }
