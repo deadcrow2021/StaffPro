@@ -17,7 +17,7 @@ public class Email
     /// <summary>
     /// Конструктор класса Email
     /// </summary>
-    /// <param name="email"></param>
+    /// <param name="email">Email</param>
     public Email(string email)
     {
         EmailAddress = ValidateEmail(email);
@@ -87,15 +87,5 @@ public class Email
         {
             return false;
         }
-    }
-
-
-    /// <summary>
-    /// Обновить email
-    /// </summary>
-    /// <param name="email"></param>
-    public void ChangeEmail(string email)
-    {
-        EmailAddress = ValidateEmail(email);
     }
 }

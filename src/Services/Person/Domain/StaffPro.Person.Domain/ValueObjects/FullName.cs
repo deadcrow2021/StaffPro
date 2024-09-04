@@ -27,9 +27,9 @@ public class FullName
     /// <summary>
     /// Конструктор класса ФИО
     /// </summary>
-    /// <param name="firstName"></param>
-    /// <param name="lastName"></param>
-    /// <param name="patronymic"></param>
+    /// <param name="firstName">Имя</param>
+    /// <param name="lastName">Фамилия</param>
+    /// <param name="patronymic">Отчество</param>
     public FullName(string firstName, string lastName, string patronymic)
     {
         FirstName = ValidateName(firstName);
@@ -54,32 +54,5 @@ public class FullName
         }
 
         return nameStr;
-    }
-
-    /// <summary>
-    /// Обновить имя
-    /// </summary>
-    /// <param name="nameStr"></param>
-    public void ChangeFirstName(string nameStr)
-    {
-        FirstName = ValidateName(nameStr);
-    }
-
-    /// <summary>
-    /// Обновить фамилию
-    /// </summary>
-    /// <param name="nameStr"></param>
-    public void ChangeLastName(string nameStr)
-    {
-        LastName = ValidateName(nameStr);
-    }
-
-    /// <summary>
-    /// Обновить отчество
-    /// </summary>
-    /// <param name="nameStr"></param>
-    public void ChangePatronymic(string nameStr)
-    {
-        Patronymic = ValidateName(nameStr);
     }
 }

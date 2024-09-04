@@ -6,41 +6,23 @@ namespace StaffPro.Person.Domain.ValueObjects;
 public class Address
 {
     /// <summary>
-    /// Имя
+    /// Город
     /// </summary>
     public string? City { get; private set; }
 
     /// <summary>
-    /// Фамилия
+    /// Страна
     /// </summary>
     public string? Country { get; private set; }
 
     /// <summary>
     /// Конструктор класса Адреса
     /// </summary>
-    /// <param name="city"></param>
-    /// <param name="country"></param>
+    /// <param name="city">Город</param>
+    /// <param name="country">Страна</param>
     public Address(string? city = null, string? country = null)
     {
         City = city;
-        Country = country;
-    }
-
-    /// <summary>
-    /// Обновить город
-    /// </summary>
-    /// <param name="city"></param>
-    public void ChangeCity(string city)
-    {
-        City = city;
-    }
-
-    /// <summary>
-    /// Обновить страну
-    /// </summary>
-    /// <param name="country"></param>
-    public void ChangeCountry(string country)
-    {
         Country = country;
     }
 }

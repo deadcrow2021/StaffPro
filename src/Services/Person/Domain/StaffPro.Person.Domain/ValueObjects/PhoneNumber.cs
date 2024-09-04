@@ -31,14 +31,4 @@ public class PhoneNumber
 
         return phoneNumber;
     }
-
-
-    /// <summary>
-    /// Изменить номер телефона
-    /// </summary>
-    /// <param name="phoneNumber"></param>
-    public void ChangePhoneNumber(string phoneNumber)
-    {
-        PhoneNumberStr = ValidatePhoneNumber(phoneNumber);
-    }
 }

@@ -1,4 +1,5 @@
 using StaffPro.Person.Domain.ValueObjects;
+using StaffPro.Person.Domain.Exceptions;
 using StaffPro.Person.Domain.Enums;
 
 namespace StaffPro.Person.Domain.Entities;
@@ -56,17 +57,17 @@ public class Person
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="firstName"></param>
-    /// <param name="lastName"></param>
-    /// <param name="patronymic"></param>
-    /// <param name="email"></param>
-    /// <param name="phoneNumber"></param>
-    /// <param name="day"></param>
-    /// <param name="month"></param>
-    /// <param name="year"></param>
-    /// <param name="avatar"></param>
-    /// <param name="gender"></param>
-    /// <param name="comment"></param>
+    /// <param name="firstName">Имя</param>
+    /// <param name="lastName">Фамилия</param>
+    /// <param name="patronymic">Отчество</param>
+    /// <param name="email">Email</param>
+    /// <param name="phoneNumber">Номер телефона</param>
+    /// <param name="day">День рождения</param>
+    /// <param name="month">Месяц рождения</param>
+    /// <param name="year">Год рождения</param>
+    /// <param name="avatar">URL аватара</param>
+    /// <param name="gender">Пол</param>
+    /// <param name="comment">Замечание/Комментарий</param>
     public Person(
         int id,
         string firstName,
@@ -82,59 +83,75 @@ public class Person
         string? comment = null
         )
     {
+        if (id == null || id <= 0)
+        {
+            throw new ArgumentException("Id should be positive integer.");
+        }
         Id = id;
-        FullName = new(firstName, lastName, patronymic);
-        Email = new(email);
-        PhoneNumber = new(phoneNumber);
+        
+        CheckParamIsNullOrEmpty(firstName, lastName, patronymic, email, phoneNumber, avatar, comment);
+        SetFullName(firstName, lastName, patronymic);
+        SetEmail(email);
+        SetPhoneNumber(phoneNumber);
         BirthDay = new(year, month, day);
-        Avatar = new(avatar);
-        Gender = gender;
+        SetAvatar(avatar);
+        SetGender(gender);
         Comment = comment;
-        WorkExperiences = [];
+        WorkExperiences = new List<WorkExperience>();
     }
 
     /// <summary>
     /// Изменить ФИО сущности Person
     /// </summary>
-    /// <param name="firstName"></param>
-    /// <param name="lastName"></param>
-    /// <param name="patronymic"></param>
+    /// <param name="firstName">Имя</param>
+    /// <param name="lastName">Фамилия</param>
+    /// <param name="patronymic">Отчество</param>
     public void SetFullName(string firstName, string lastName, string patronymic)
     {
+        CheckParamIsNullOrEmpty(firstName, lastName, patronymic);
         FullName = new(firstName, lastName, patronymic);
     }
 
     /// <summary>
     /// Изменить Email
     /// </summary>
-    /// <param name="email"></param>
+    /// <param name="email">Email</param>
     public void SetEmail(string email)
     {
+        CheckParamIsNullOrEmpty(email);
         Email = new(email);
     }
 
     /// <summary>
     /// Изменить Номер телефона
     /// </summary>
-    /// <param name="phoneNumber"></param>
+    /// <param name="phoneNumber">Номер телефона</param>
     public void SetPhoneNumber(string phoneNumber)
     {
+        CheckParamIsNullOrEmpty(phoneNumber);
+        PhoneNumber = new(phoneNumber);
+    }
+
+    public void SetBirthDay(string phoneNumber)
+    {
+        CheckParamIsNullOrEmpty(phoneNumber);
         PhoneNumber = new(phoneNumber);
     }
 
     /// <summary>
     /// Изменить ссылку на аватар
     /// </summary>
-    /// <param name="avatar"></param>
+    /// <param name="avatar">URL аватара</param>
     public void SetAvatar(string avatar)
     {
+        CheckParamIsNullOrEmpty(avatar);
         Avatar = new(avatar);
     }
     
     /// <summary>
     /// Изменить пол
     /// </summary>
-    /// <param name="gender"></param>
+    /// <param name="gender">Пол</param>
     public void SetGender(eGender gender)
     {
         Gender = gender;
@@ -143,24 +160,24 @@ public class Person
     /// <summary>
     /// Получить сущность WorkExperience по книальному идентификатору
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">Идентификатор</param>
+    /// <returns>Сущность WorkExperience</returns>
     public WorkExperience? GetWorkExperienceById(int id)
     {
-        return WorkExperiences.FirstOrDefault(we => we.Id == id);
+        return WorkExperiences.FirstOrDefault(we => we.Id == id, null);
     }
 
     /// <summary>
     /// Добавить сущность WorkExperience
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="position"></param>
-    /// <param name="organization"></param>
-    /// <param name="description"></param>
-    /// <param name="employmentDate"></param>
-    /// <param name="firingDate"></param>
-    /// <param name="city"></param>
-    /// <param name="country"></param>
+    /// <param name="id">Идентификатор</param>
+    /// <param name="position">Должность</param>
+    /// <param name="organization">Организация</param>
+    /// <param name="description">Описание</param>
+    /// <param name="employmentDate">Дата устройства на работу</param>
+    /// <param name="firingDate">Дата увольнения</param>
+    /// <param name="city">Город</param>
+    /// <param name="country">Страна</param>
     public void AddWorkExperience(
         int id,
         string position,
@@ -168,8 +185,8 @@ public class Person
         string description,
         DateTime employmentDate,
         DateTime firingDate,
-        string city = "",
-        string country = ""
+        string? city = null,
+        string? country = null
         )
     {
         WorkExperience workExperience = new(
@@ -182,14 +199,18 @@ public class Person
             city,
             country
             );
+        if (WorkExperiences.Any(x => x.Id == id))
+        {
+            throw new EntityExistsException("WorkExperience", id);
+        }
         WorkExperiences.Add(workExperience);
     }
 
     /// <summary>
     /// Удалить сущность WorkExperience по id
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">Идентификатор</param>
+    /// <returns>Результат удаления сущности WorkExperience</returns>
     public bool DeleteWorkExperienceById(int id)
     {
         WorkExperience? we = GetWorkExperienceById(id);
@@ -203,5 +224,12 @@ public class Person
             return true;
         }
     }
-    
+
+    private void CheckParamIsNullOrEmpty(params string?[] args)
+    {
+        if (args.Any(arg => string.IsNullOrEmpty(arg)))
+        {
+            throw new ArgumentException("Argument can\'t be null or empty");
+        }
+    }
 }

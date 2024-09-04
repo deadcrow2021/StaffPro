@@ -13,7 +13,7 @@ public class Avatar
     /// <summary>
     /// Конструктор класса Avatar
     /// </summary>
-    /// <param name="avatarURL"></param>
+    /// <param name="avatarURL">URL аватара</param>
     public Avatar(string avatarURL)
     {
         AvatarURL = ValidateURL(avatarURL);

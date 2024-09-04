@@ -15,98 +15,48 @@ public class PersonTests
     [SetUp]
     public void Setup()
     {
-        TestPerson = new(
-                1,
-                "first",
-                "last",
-                "patr",
-                "test@mail.ru",
-                "+79991234567",
-                15,
-                10,
-                2000,
-                "/data/image.png",
-                eGender.Male,
-                "Comment 123"
-            );
+        TestPerson = FakeDataGenerator.CreatePerson().Generate();
     }
 
     [Test]
-    public void ChangeFirstName_FirstNameEqualsToChangedFirstName_True()
+    public void SetFullName_FullNameAttrsEqualsToChangedAttrs_True()
     {
-        Assert.That(TestPerson.FullName.FirstName, Is.EqualTo("first"));
-
-        TestPerson.FullName.ChangeFirstName("changedName");
-        Assert.That(TestPerson.FullName.FirstName, Is.EqualTo("changedName"));
-
-        TestPerson.FullName.ChangeFirstName("testName");
-        Assert.That(TestPerson.FullName.FirstName, Is.EqualTo("testName"));
+        TestPerson.SetFullName("changedFirstName", "changedLastName", "changedPatronymic");
+        Assert.That(TestPerson.FullName.FirstName, Is.EqualTo("changedFirstName"));
+        Assert.That(TestPerson.FullName.LastName, Is.EqualTo("changedLastName"));
+        Assert.That(TestPerson.FullName.Patronymic, Is.EqualTo("changedPatronymic"));
     }
 
     [Test]
-    public void ChangeLastName_LastNameEqualsToChangedLastName_True()
+    public void SetFullName_SetInvalidFirstName_ThrowsError()
     {
-        Assert.That(TestPerson.FullName.LastName, Is.EqualTo("last"));
-
-        TestPerson.FullName.ChangeLastName("changedName");
-        Assert.That(TestPerson.FullName.LastName, Is.EqualTo("changedName"));
-
-        TestPerson.FullName.ChangeLastName("testName");
-        Assert.That(TestPerson.FullName.LastName, Is.EqualTo("testName"));
+        Assert.Throws<ArgumentException>(() => TestPerson.SetFullName("", "changedLastName", "changedPatronymic"));
+        Assert.Throws<ArgumentException>(() => TestPerson.SetFullName(null, "changedLastName", "changedPatronymic"));
+        Assert.Throws<LongStringException>(() => TestPerson.SetFullName(longString, "changedLastName", "changedPatronymic"));
+        Assert.Throws<ArgumentException>(() => TestPerson.SetFullName("test123", "changedLastName", "changedPatronymic"));
+        Assert.Throws<ArgumentException>(() => TestPerson.SetFullName("test_name", "changedLastName", "changedPatronymic"));
     }
 
     [Test]
-    public void ChangePatronymic_PatronymicEqualsToChangedPatronymic_True()
+    public void SetFullName_SetInvalidLastName_ThrowsError()
     {
-        Assert.That(TestPerson.FullName.Patronymic, Is.EqualTo("patr"));
-
-        TestPerson.FullName.ChangePatronymic("changedName");
-        Assert.That(TestPerson.FullName.Patronymic, Is.EqualTo("changedName"));
-
-        TestPerson.FullName.ChangePatronymic("testName");
-        Assert.That(TestPerson.FullName.Patronymic, Is.EqualTo("testName"));
+        Assert.Throws<ArgumentException>(() => TestPerson.SetFullName("changedFirstName", "", "changedPatronymic"));
+        Assert.Throws<ArgumentException>(() => TestPerson.SetFullName("changedFirstName", null, "changedPatronymic"));
+        Assert.Throws<LongStringException>(() => TestPerson.SetFullName("changedFirstName", longString, "changedPatronymic"));
+        Assert.Throws<ArgumentException>(() => TestPerson.SetFullName("changedFirstName", "test123", "changedPatronymic"));
+        Assert.Throws<ArgumentException>(() => TestPerson.SetFullName("changedFirstName", "test_name", "changedPatronymic"));
     }
 
     [Test]
-    public void ChangeFullName_FullNameEqualsToChangedFullName_True()
+    public void SetFullName_SetInvalidPatronymic_ThrowsError()
     {
-        Assert.That(TestPerson.FullName.FirstName, Is.EqualTo("first"));
-        Assert.That(TestPerson.FullName.LastName, Is.EqualTo("last"));
-        Assert.That(TestPerson.FullName.Patronymic, Is.EqualTo("patr"));
-
-        TestPerson.SetFullName("FirstName", "LastName", "Patronymic");
-
-        Assert.That(TestPerson.FullName.FirstName, Is.EqualTo("FirstName"));
-        Assert.That(TestPerson.FullName.LastName, Is.EqualTo("LastName"));
-        Assert.That(TestPerson.FullName.Patronymic, Is.EqualTo("Patronymic"));
+        Assert.Throws<ArgumentException>(() => TestPerson.SetFullName("changedFirstName", "changedLastName", ""));
+        Assert.Throws<ArgumentException>(() => TestPerson.SetFullName("changedFirstName", "changedLastName", null));
+        Assert.Throws<LongStringException>(() => TestPerson.SetFullName("changedFirstName", "changedLastName", longString));
+        Assert.Throws<ArgumentException>(() => TestPerson.SetFullName("changedFirstName", "changedLastName", "test123"));
+        Assert.Throws<ArgumentException>(() => TestPerson.SetFullName("changedFirstName", "changedLastName", "test_name"));
     }
 
-    [Test]
-    public void ChangeFirstName_FirstNameEqualsToChangedFirstName_ThrowsError()
-    {
-        Assert.Throws<ShortStringException>(() => TestPerson.FullName.ChangeFirstName(""));
-        Assert.Throws<LongStringException>(() => TestPerson.FullName.ChangeFirstName(longString));
-        Assert.Throws<ArgumentException>(() => TestPerson.FullName.ChangeFirstName("test123"));
-        Assert.Throws<ArgumentException>(() => TestPerson.FullName.ChangeFirstName("test_name"));
-    }
-
-    [Test]
-    public void ChangeLastName_FullLastEqualsToChangedLastName_ThrowsError()
-    {
-        Assert.Throws<ShortStringException>(() => TestPerson.FullName.ChangeLastName(""));
-        Assert.Throws<LongStringException>(() => TestPerson.FullName.ChangeLastName(longString));
-        Assert.Throws<ArgumentException>(() => TestPerson.FullName.ChangeLastName("test123"));
-        Assert.Throws<ArgumentException>(() => TestPerson.FullName.ChangeLastName("test_name"));
-    }
-
-    [Test]
-    public void ChangePatronymic_PatronymicEqualsToChangedPatronymic_ThrowsError()
-    {
-        Assert.Throws<ShortStringException>(() => TestPerson.FullName.ChangePatronymic(""));
-        Assert.Throws<LongStringException>(() => TestPerson.FullName.ChangePatronymic(longString));
-        Assert.Throws<ArgumentException>(() => TestPerson.FullName.ChangePatronymic("test123"));
-        Assert.Throws<ArgumentException>(() => TestPerson.FullName.ChangePatronymic("test_name"));
-    }
 
     [TestCase("test@mail.ru")]
     [TestCase("test_changed@mail.com")]
@@ -151,9 +101,6 @@ public class PersonTests
     [Test]
     public void SetBirthDate_BirthDateEqualsToChangedBirthDate_True()
     {
-        DateTime birthDate = new(2000, 10, 15);
-        Assert.That(TestPerson.BirthDay, Is.EqualTo(birthDate));
-
         DateTime birthDate1 = new(2001, 11, 16);
         TestPerson.BirthDay = new DateTime(2001, 11, 16);
         Assert.That(TestPerson.BirthDay, Is.EqualTo(birthDate1));
@@ -198,31 +145,20 @@ public class PersonWorkExperienceTest
 
     public PersonWorkExperienceTest()
     {
-        TestPerson = new(
-            1,
-            "first",
-            "last",
-            "patr",
-            "test@mail.ru",
-            "+79991234567",
-            15,
-            10,
-            2000,
-            "/data/image.png",
-            eGender.Male,
-            "Comment 123"
-        );
+        TestPerson = FakeDataGenerator.CreatePerson().Generate();
 
         TestPerson.AddWorkExperience(
             1, "jun programmer", "zxc comp", "test_desc1",
             new DateTime(2020, 1, 10),
-            new DateTime(2022, 6, 12)
+            new DateTime(2022, 6, 12),
+            string.Empty, string.Empty
         );
 
         TestPerson.AddWorkExperience(
             2, "mid programmer", "asd comp", "test_desc2",
             new DateTime(2022, 7, 10),
-            new DateTime(2023, 8, 12)
+            new DateTime(2023, 8, 12),
+            string.Empty, string.Empty
         );
     }
 
@@ -232,7 +168,8 @@ public class PersonWorkExperienceTest
         TestPerson.AddWorkExperience(
             3, "senior programmer", "ctsg", "test_desc3",
             new DateTime(2023, 9, 10),
-            new DateTime(2024, 10, 12)
+            new DateTime(2024, 10, 12),
+            string.Empty, string.Empty
         );
 
         WorkExperience? newExp = TestPerson.GetWorkExperienceById(3);
@@ -292,8 +229,8 @@ public class PersonWorkExperienceTest
     public void SetAddress_AddressEqualsToChangedAddress_ThrowsException()
     {
         WorkExperience? personExp = TestPerson.GetWorkExperienceById(1);
-        Assert.Throws<LongStringException>(() => personExp.SetAddress(city: longString));
-        Assert.Throws<LongStringException>(() => personExp.SetAddress(country: longString));
+        Assert.Throws<LongStringException>(() => personExp.SetAddress(string.Empty, longString));
+        Assert.Throws<LongStringException>(() => personExp.SetAddress(longString, string.Empty));
     }
 
     [Test]
@@ -329,63 +266,26 @@ public class PersonWorkExperienceTest
     }
 }
 
-
-
-
-
-public class TestPerson : Faker<StaffPro.Person.Domain.Entities.Person>
+/// <summary>
+/// Класс для генерации рандомных данных для 
+/// </summary>
+public static class FakeDataGenerator
 {
-    public TestPerson(TestFullName _TestFullName, TestEmail _TestEmail, TestPhoneNumber _TestPhoneNumber, TestAvatar _TestAvatar)
+    public static Faker<StaffPro.Person.Domain.Entities.Person> CreatePerson()
     {
-        int id = 1;
-        
-        UseSeed(123)
-        .RuleFor(p => p.Id, _ => id++)
-        .RuleFor(p => p.FullName, _ => _TestFullName.Generate(1).First())
-        .RuleFor(p => p.Email, _ => _TestEmail.Generate(1).First())
-        .RuleFor(p => p.PhoneNumber, _ => _TestPhoneNumber.Generate(1).First())
-        .RuleFor(p => p.BirthDay, f => f.Date.Between(DateTime.Parse("1/1/1970"), DateTime.Parse("1/1/2000")))
-        .RuleFor(p => p.Avatar, _ => _TestAvatar.Generate(1).First())
-        .RuleFor(p => p.Gender, f => f.PickRandom<eGender>())
-        .RuleFor(p => p.Comment, f => f.Name.JobDescriptor());
+        return new Faker<StaffPro.Person.Domain.Entities.Person>()
+            .CustomInstantiator(f => new StaffPro.Person.Domain.Entities.Person(
+                1,
+                f.Name.FirstName(),
+                f.Name.LastName(),
+                f.Name.LastName(),
+                f.Internet.Email(),
+                "+79991234567",
+                f.Random.Int(1, 28),
+                f.Random.Int(1, 12),
+                f.Random.Int(1970, 2000),
+                "/data/image.png",
+                eGender.Male,
+                f.Name.JobDescriptor()));
     }
 }
-
-public class TestFullName : Faker<FullName>
-{
-    public TestFullName()
-    {
-        UseSeed(123)
-        .RuleFor(c => c.FirstName, f => f.Name.FirstName())
-        .RuleFor(c => c.LastName, f => f.Name.LastName())
-        .RuleFor(c => c.Patronymic, f => f.Name.FirstName());
-    }
-}
-
-public class TestEmail : Faker<Email>
-{
-    public TestEmail()
-    {
-        UseSeed(123)
-        .RuleFor(c => c.EmailAddress, f => f.Internet.Email());
-    }
-}
-
-public class TestPhoneNumber : Faker<PhoneNumber>
-{
-    public TestPhoneNumber()
-    {
-        UseSeed(123)
-        .RuleFor(c => c.PhoneNumberStr, f => f.Phone.PhoneNumber("ru"));
-    }
-}
-
-public class TestAvatar : Faker<Avatar>
-{
-    public TestAvatar()
-    {
-        UseSeed(123)
-        .RuleFor(c => c.AvatarURL, f => f.Internet.Avatar());
-    }
-}
-

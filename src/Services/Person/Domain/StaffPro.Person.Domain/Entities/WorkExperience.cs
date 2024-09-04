@@ -47,13 +47,13 @@ public class WorkExperience
     /// <summary>
     /// Конструктор класса WorkExperience
     /// </summary>
-    /// <param name="position"></param>
-    /// <param name="organization"></param>
-    /// <param name="description"></param>
-    /// <param name="employmentDate"></param>
-    /// <param name="firingDate"></param>
-    /// <param name="city"></param>
-    /// <param name="country"></param>
+    /// <param name="position">Должность</param>
+    /// <param name="organization">Организация</param>
+    /// <param name="description">Описание</param>
+    /// <param name="employmentDate">Дата устройства на работу</param>
+    /// <param name="firingDate">Дата увольнения</param>
+    /// <param name="city">Город</param>
+    /// <param name="country">Страна</param>
     public WorkExperience(
             int id,
             string position,
@@ -61,15 +61,19 @@ public class WorkExperience
             string description,
             DateTime employmentDate,
             DateTime firingDate,
-            string city = "",
-            string country = ""
+            string? city = null,
+            string? country = null
             )
     {
+        if (id == null || id <= 0)
+        {
+            throw new ArgumentException("Id should be positive integer.");
+        }
         Id = id;
-        Position = CheckLength(position);
-        Organization = organization;
-        Description = description;
-        Address = new Address(CheckLength(city), CheckLength(country));
+        SetPosition(position);
+        SetOrganization(organization);
+        SetDescription(description);
+        SetAddress(city, country);
     
         CompareEmploymentAndFiringDates(employmentDate, firingDate);
         EmploymentDate = employmentDate;
@@ -79,44 +83,51 @@ public class WorkExperience
     /// <summary>
     /// Изменить должность
     /// </summary>
-    /// <param name="position"></param>
+    /// <param name="position">Должность</param>
     public void SetPosition(string position)
     {
+        CheckParamIsNullOrEmpty(position);
         Position = CheckLength(position);
     }
 
     /// <summary>
     /// Изменить организацию
     /// </summary>
-    /// <param name="organization"></param>
+    /// <param name="organization">Организация</param>
     public void SetOrganization(string organization)
     {
+        CheckParamIsNullOrEmpty(organization);
         Organization = CheckLength(organization);
     }
 
     /// <summary>
     /// Изменить Описание
     /// </summary>
-    /// <param name="description"></param>
+    /// <param name="description">Описание</param>
     public void SetDescription(string description)
     {
+        CheckParamIsNullOrEmpty(description);
         Description = description;
     }
 
     /// <summary>
     /// Изменить адрес
     /// </summary>
-    /// <param name="city"></param>
-    /// <param name="country"></param>
-    public void SetAddress(string city = "", string country = "")
+    /// <param name="city">Город</param>
+    /// <param name="country">Страна</param>
+    public void SetAddress(string? city = null, string? country = null)
     {
+        if (city == null || country == null)
+        {
+            throw new ArgumentException("City and country can\'t be null.");
+        }
         Address = new Address(CheckLength(city), CheckLength(country));
     }
 
     /// <summary>
     /// Изменить дату устройства на работу
     /// </summary>
-    /// <param name="employmentDate"></param>
+    /// <param name="employmentDate">Дату устройства на работу</param>
     public void SetEmploymentDate(DateTime employmentDate)
     {
         CompareEmploymentAndFiringDates(employmentDate, FiringDate);
@@ -126,7 +137,7 @@ public class WorkExperience
     /// <summary>
     /// Изменить дату увольнения с работы
     /// </summary>
-    /// <param name="firingDate"></param>
+    /// <param name="firingDate">Дата увольнения</param>
     public void SetFiringDate(DateTime firingDate)
     {
         CompareEmploymentAndFiringDates(EmploymentDate, firingDate);
@@ -141,13 +152,26 @@ public class WorkExperience
         }
     }
 
-    private static string CheckLength(string position)
+    private static string CheckLength(string str)
     {
-        if (position.Length > 250)
+        if (str == null)
+        {
+            throw new ArgumentNullException("Argument can\'t be null.");
+        }
+
+        if (str.Length > 250)
         {
             throw new LongStringException(250);
         }
 
-        return position;
+        return str;
+    }
+
+    private void CheckParamIsNullOrEmpty(params string?[] args)
+    {
+        if (args.Any(arg => string.IsNullOrEmpty(arg)))
+        {
+            throw new ArgumentException("Argument can\'t be null or empty.");
+        }
     }
 }
