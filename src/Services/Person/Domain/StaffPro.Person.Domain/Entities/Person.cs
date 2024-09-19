@@ -1,6 +1,7 @@
 using StaffPro.Person.Domain.ValueObjects;
 using StaffPro.Person.Domain.Exceptions;
 using StaffPro.Person.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace StaffPro.Person.Domain.Entities;
 
@@ -62,9 +63,7 @@ public class Person
     /// <param name="patronymic">Отчество</param>
     /// <param name="email">Email</param>
     /// <param name="phoneNumber">Номер телефона</param>
-    /// <param name="day">День рождения</param>
-    /// <param name="month">Месяц рождения</param>
-    /// <param name="year">Год рождения</param>
+    /// <param name="birthDate">Дата рождения</param>
     /// <param name="avatar">URL аватара</param>
     /// <param name="gender">Пол</param>
     /// <param name="comment">Замечание/Комментарий</param>
@@ -75,15 +74,13 @@ public class Person
         string patronymic,
         string email,
         string phoneNumber,
-        int day,
-        int month,
-        int year,
+        DateTime birthDate,
         string avatar,
         eGender gender,
         string? comment = null
         )
     {
-        if (id == null || id <= 0)
+        if (id <= 0)
         {
             throw new ArgumentException("Id should be positive integer.");
         }
@@ -93,7 +90,8 @@ public class Person
         SetFullName(firstName, lastName, patronymic);
         SetEmail(email);
         SetPhoneNumber(phoneNumber);
-        BirthDay = new(year, month, day);
+        // BirthDay = new(year, month, day);
+        SetBirthDay(birthDate);
         SetAvatar(avatar);
         SetGender(gender);
         Comment = comment;
@@ -132,10 +130,13 @@ public class Person
         PhoneNumber = new(phoneNumber);
     }
 
-    public void SetBirthDay(string phoneNumber)
+    /// <summary>
+    /// Изменить Дату Рождения
+    /// </summary>
+    /// <param name="birthDate">Дата рождения</param>
+    public void SetBirthDay(DateTime birthDate)
     {
-        CheckParamIsNullOrEmpty(phoneNumber);
-        PhoneNumber = new(phoneNumber);
+        BirthDay = birthDate;
     }
 
     /// <summary>

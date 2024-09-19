@@ -3,6 +3,7 @@ using StaffPro.Person.Domain.Exceptions;
 using StaffPro.Person.Domain.Entities;
 using StaffPro.Person.Domain.Enums;
 using Bogus;
+using Bogus.DataSets;
 
 namespace StaffPro.Person.Tests.Unit;
 
@@ -15,7 +16,7 @@ public class PersonTests
     [SetUp]
     public void Setup()
     {
-        TestPerson = FakeDataGenerator.CreatePerson().Generate();
+        TestPerson = FakePersonDataGenerator.CreatePerson(1).Generate();
     }
 
     [Test]
@@ -145,7 +146,7 @@ public class PersonWorkExperienceTest
 
     public PersonWorkExperienceTest()
     {
-        TestPerson = FakeDataGenerator.CreatePerson().Generate();
+        TestPerson = FakePersonDataGenerator.CreatePerson(1).Generate();
 
         TestPerson.AddWorkExperience(
             1, "jun programmer", "zxc comp", "test_desc1",
@@ -175,6 +176,10 @@ public class PersonWorkExperienceTest
         WorkExperience? newExp = TestPerson.GetWorkExperienceById(3);
         Assert.NotNull(newExp);
         Assert.That(TestPerson.WorkExperiences.Count, Is.EqualTo(3));
+
+        WorkExperience? expNotExists = TestPerson.GetWorkExperienceById(123);
+        Assert.Null(expNotExists);
+
     }
 
     [Test]
@@ -267,25 +272,25 @@ public class PersonWorkExperienceTest
 }
 
 /// <summary>
-/// Класс для генерации рандомных данных для 
+/// Класс для генерации рандомных данных для сущности Person
 /// </summary>
-public static class FakeDataGenerator
+public static class FakePersonDataGenerator
 {
-    public static Faker<StaffPro.Person.Domain.Entities.Person> CreatePerson()
+    public static Faker<StaffPro.Person.Domain.Entities.Person> CreatePerson(int id)
     {
         return new Faker<StaffPro.Person.Domain.Entities.Person>()
-            .CustomInstantiator(f => new StaffPro.Person.Domain.Entities.Person(
-                1,
+            .CustomInstantiator(f => {
+                return new StaffPro.Person.Domain.Entities.Person(
+                id,
                 f.Name.FirstName(),
                 f.Name.LastName(),
                 f.Name.LastName(),
                 f.Internet.Email(),
                 "+79991234567",
-                f.Random.Int(1, 28),
-                f.Random.Int(1, 12),
-                f.Random.Int(1970, 2000),
+                f.Date.Between(new DateTime(1960, 1, 1), new DateTime(2004, 1, 1)),
                 "/data/image.png",
                 eGender.Male,
-                f.Name.JobDescriptor()));
+                f.Name.JobDescriptor());
+            });
     }
 }

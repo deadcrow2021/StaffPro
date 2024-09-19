@@ -5,7 +5,6 @@ namespace StaffPro.Person.Domain.Exceptions;
 /// </summary>
 public class ShortStringException : Exception
 {
-    public int minLength;
     public ShortStringException(int minLength)
     : base($"Слишком короткая строка. Минимальная длина - {minLength}.")
     {

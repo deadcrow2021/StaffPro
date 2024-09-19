@@ -65,7 +65,7 @@ public class WorkExperience
             string? country = null
             )
     {
-        if (id == null || id <= 0)
+        if (id <= 0)
         {
             throw new ArgumentException("Id should be positive integer.");
         }
