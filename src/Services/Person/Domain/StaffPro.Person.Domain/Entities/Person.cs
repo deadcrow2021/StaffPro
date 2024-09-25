@@ -90,7 +90,6 @@ public class Person
         SetFullName(firstName, lastName, patronymic);
         SetEmail(email);
         SetPhoneNumber(phoneNumber);
-        // BirthDay = new(year, month, day);
         SetBirthDay(birthDate);
         SetAvatar(avatar);
         SetGender(gender);
